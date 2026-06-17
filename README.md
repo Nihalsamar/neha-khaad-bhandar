@@ -24,59 +24,57 @@ the shop owner manages products, stock and orders from an admin panel.
 - Orders: view all orders, update status (New → Confirmed → Delivered / Cancelled).
   Cancelling an order returns its items to stock automatically.
 
-## 🗂️ The database lives in this folder
+## 🗂️ Where the data lives
 
-Data is stored in a single SQLite file at **`database/store.db`** inside this
-project — exactly where the app lives. No external database server needed.
+- **Locally:** a SQLite file inside this project — `database/store.db` — created automatically when `TURSO_DATABASE_URL` is not set.
+- **In production:** a free **Turso** cloud database (SQLite-compatible). Set
+  `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` and the app uses that instead.
 
 ## 🚀 Run it locally
 
 You need [Node.js](https://nodejs.org) (version 18 or newer).
 
 ```bash
-# 1. install dependencies
 npm install
-
-# 2. (optional) create your settings
-copy .env.example .env        # Windows
-# cp .env.example .env        # Mac/Linux
-
-# 3. load sample products + create the admin user
-npm run seed
-
-# 4. start the app
+copy .env.example .env        # Windows  (cp on Mac/Linux)
+npm run seed                  # loads sample products + admin user
 npm start
 ```
 
-Then open:
 - Store: http://localhost:3000
-- Admin: http://localhost:3000/admin  (default login **admin / admin123**)
+- Admin: http://localhost:3000/admin  (default **admin / admin123**)
 
-> Change `ADMIN_PASSWORD` and `JWT_SECRET` in `.env`, then run `npm run seed`
-> again on a fresh database to apply a new admin password.
+## ☁️ Deploy free (Render + Turso, no credit card)
 
-## ☁️ Deploy live for free
+**1. Create the database (Turso)**
+- Sign up at https://turso.tech (log in with GitHub — free, no card).
+- Create a database (any name; pick a region near you).
+- Copy the **Database URL** (looks like `libsql://<name>-<org>.turso.io`).
+- Create a **database token** and copy it.
 
-Because the app uses a database file, it needs a host that keeps a persistent
-disk. **Fly.io** offers this on its free allowance and is the easiest option.
+**2. Put the code on GitHub**
+- Create a new repo and push this folder to it (the project is already a git repo).
 
-1. Install the CLI: https://fly.io/docs/hands-on/install-flyctl/
-2. Sign up / log in: `fly auth signup`
-3. From this folder:
-   ```bash
-   fly launch --no-deploy            # uses the included fly.toml
-   fly volumes create nkb_data --size 1 --region sin
-   fly secrets set JWT_SECRET="a-long-random-string" ADMIN_PASSWORD="your-password"
-   fly deploy
-   ```
-4. Your store will be live at `https://<your-app-name>.fly.dev`
+**3. Deploy on Render**
+- At https://render.com sign up (GitHub login — free, no card).
+- New + → **Blueprint** → pick your repo. Render reads `render.yaml`.
+- When prompted, set these environment variables:
+  - `TURSO_DATABASE_URL` = your Turso URL
+  - `TURSO_AUTH_TOKEN` = your Turso token
+  - `ADMIN_USERNAME` = e.g. `admin`
+  - `ADMIN_PASSWORD` = a strong password
+  - (`JWT_SECRET` is generated automatically.)
+- Click **Apply**. Render runs the seed once, then starts the server.
 
-A `Dockerfile` is included, so the same setup also works on Render, Railway,
-or any host that supports Docker + a persistent volume mounted at `/data`.
+Your store goes live at `https://<your-service>.onrender.com`.
+
+> Note: Render's free instance sleeps after ~15 min idle and takes ~30–60s to
+> wake on the next visit. Your data is safe regardless — it lives in Turso, not
+> on the instance.
 
 ## 🧰 Tech stack
 - **Backend:** Node.js + Express
-- **Database:** SQLite (`better-sqlite3`) — file stored in `database/`
+- **Database:** SQLite via **libSQL / Turso** (`@libsql/client`) — local file in dev, Turso cloud in production
 - **Auth:** JSON Web Tokens (admin only)
 - **Frontend:** plain HTML / CSS / JavaScript (no build step, loads fast)
 
@@ -99,4 +97,4 @@ or any host that supports Docker + a persistent volume mounted at `/data`.
     ├── css/ and js/
 ```
 
-Jai Kisan 🚜
+ 
