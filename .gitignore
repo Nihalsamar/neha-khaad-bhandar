@@ -6,3 +6,6 @@ database/*.db-shm
 database/*.db-wal
 npm-debug.log*
 .DS_Store
+
+# Local tunnel binary (not part of the app)
+cloudflared.exe
