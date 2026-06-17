@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin · Neha Khaad Bhandar</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌾</text></svg>" />
+</head>
+<body class="admin-body">
+
+  <!-- Login -->
+  <div id="loginView" class="login-wrap">
+    <div class="login-card">
+      <div class="logo-big">🌾</div>
+      <h2>Neha Khaad Bhandar</h2>
+      <p class="sub">Shop Admin Panel</p>
+      <div class="field"><label>Username</label><input id="loginUser" type="text" placeholder="admin" /></div>
+      <div class="field"><label>Password</label><input id="loginPass" type="password" placeholder="••••••••" /></div>
+      <button class="btn-primary" id="loginBtn">Login</button>
+      <p class="login-hint">Default: admin / admin123 (change after first login)</p>
+      <a href="/" class="back-link">← Back to store</a>
+    </div>
+  </div>
+
+  <!-- Dashboard shell -->
+  <div id="appView" style="display:none;">
+    <aside class="sidebar">
+      <div class="side-brand"><span>🌾</span> NKB Admin</div>
+      <nav>
+        <button class="nav-item active" data-tab="dashboard">📊 Dashboard</button>
+        <button class="nav-item" data-tab="products">📦 Products</button>
+        <button class="nav-item" data-tab="inventory">📋 Inventory</button>
+        <button class="nav-item" data-tab="orders">🧾 Orders</button>
+      </nav>
+      <button class="changepw" id="changePwBtn">🔑 Change Password</button>
+      <button class="logout" id="logoutBtn">🚪 Logout</button>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-top">
+        <h1 id="tabTitle">Dashboard</h1>
+        <div class="who">👤 <span id="whoAmI"></span></div>
+      </header>
+
+      <!-- Dashboard -->
+      <section id="tab-dashboard" class="tab">
+        <div class="stat-grid" id="statGrid"></div>
+        <div class="panel">
+          <h3>⚠️ Low / Out of Stock</h3>
+          <div id="lowStockList"></div>
+        </div>
+      </section>
+
+      <!-- Products -->
+      <section id="tab-products" class="tab" style="display:none;">
+        <div class="toolbar">
+          <input id="prodSearch" class="search-box" placeholder="🔍 Search products..." />
+          <button class="btn-primary small" id="addProductBtn">+ Add Product</button>
+        </div>
+        <div class="table-wrap">
+          <table id="productTable">
+            <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Inventory -->
+      <section id="tab-inventory" class="tab" style="display:none;">
+        <div class="toolbar"><p class="muted">Quickly update stock levels. Click +/- or set an exact value.</p></div>
+        <div class="table-wrap">
+          <table id="invTable">
+            <thead><tr><th>Product</th><th>SKU</th><th>Current Stock</th><th>Adjust</th><th>Status</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Orders -->
+      <section id="tab-orders" class="tab" style="display:none;">
+        <div class="toolbar">
+          <select id="orderFilter" class="search-box">
+            <option value="">All Orders</option>
+            <option value="NEW">New</option>
+            <option value="CONFIRMED">Confirmed</option>
+            <option value="DELIVERED">Delivered</option>
+            <option value="CANCELLED">Cancelled</option>
+          </select>
+        </div>
+        <div id="ordersList"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Product modal -->
+  <div class="overlay" id="adminOverlay"></div>
+  <div class="modal-card" id="productModal">
+    <h3 id="prodModalTitle">Add Product</h3>
+    <p class="sub">Fill product details below.</p>
+    <input type="hidden" id="pId" />
+    <div class="field"><label>Name *</label><input id="pName" type="text" /></div>
+    <div class="row2">
+      <div class="field"><label>Category</label><select id="pCategory"></select></div>
+      <div class="field"><label>Brand</label><input id="pBrand" type="text" /></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Unit (e.g. 50 kg bag)</label><input id="pUnit" type="text" /></div>
+      <div class="field"><label>Emoji / Image URL</label><input id="pImage" type="text" placeholder="🧪 or https://..." /></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Selling Price (₹) *</label><input id="pPrice" type="number" min="0" /></div>
+      <div class="field"><label>MRP (₹)</label><input id="pMrp" type="number" min="0" /></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Stock Qty</label><input id="pStock" type="number" min="0" /></div>
+      <div class="field"><label>Low-stock alert at</label><input id="pLow" type="number" min="0" value="5" /></div>
+    </div>
+    <div class="field"><label>SKU</label><input id="pSku" type="text" /></div>
+    <div class="field"><label>Description</label><textarea id="pDesc"></textarea></div>
+    <button class="btn-primary" id="saveProductBtn">Save Product</button>
+    <button class="btn-primary ghost" id="closeProductModal">Cancel</button>
+  </div>
+
+  <!-- Change password modal -->
+  <div class="modal-card" id="passwordModal">
+    <h3>Change Password</h3>
+    <p class="sub">Update your admin login password.</p>
+    <div class="field"><label>Current Password</label><input id="curPw" type="password" autocomplete="current-password" /></div>
+    <div class="field"><label>New Password</label><input id="newPw" type="password" autocomplete="new-password" placeholder="At least 6 characters" /></div>
+    <div class="field"><label>Confirm New Password</label><input id="confirmPw" type="password" autocomplete="new-password" /></div>
+    <button class="btn-primary" id="savePwBtn">Update Password</button>
+    <button class="btn-primary ghost" id="closePwModal">Cancel</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

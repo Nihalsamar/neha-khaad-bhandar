@@ -1,0 +1,31 @@
+# Fly.io deployment config — free tier friendly, with a persistent volume
+# so the SQLite database survives restarts.
+#
+# Setup once:
+#   fly launch --no-deploy          (creates the app; keep this file)
+#   fly volumes create nkb_data --size 1 --region sin
+#   fly deploy
+#
+app = "neha-khaad-bhandar"
+primary_region = "bom"   # Mumbai — closest region to Mirzapur, U.P.
+
+[build]
+
+[env]
+  PORT = "3000"
+  DB_PATH = "/data/store.db"
+
+[[mounts]]
+  source = "nkb_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"

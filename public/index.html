@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neha Khaad Bhandar — Seeds, Fertilizers & Farm Supplies</title>
+  <meta name="description" content="Buy fertilizers, seeds, pesticides and farm supplies online from Neha Khaad Bhandar." />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌾</text></svg>" />
+</head>
+<body>
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="container">
+      <span>📞 +91 8382819956 &nbsp;·&nbsp; Sadar, Mirzapur (U.P.)</span>
+      <a href="/admin">🔒 Shop Admin Login</a>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="main">
+    <div class="container">
+      <a href="/" class="brand">
+        <div class="logo">🌾</div>
+        <div>
+          <h1>Neha Khaad Bhandar</h1>
+          <small>D.B. Singh Seeds · Khaad · Beej · Krishi Kendra</small>
+        </div>
+      </a>
+      <div class="search">
+        🔍 <input id="searchInput" type="text" placeholder="Search urea, seeds, pesticide..." />
+      </div>
+      <button class="cart-btn" id="openCart">
+        🛒 Cart <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <h2>Everything your farm needs, delivered to your village.</h2>
+      <p>Genuine fertilizers, certified seeds, crop protection and tools — at honest prices from your trusted local krishi kendra.</p>
+      <div class="pills">
+        <span class="pill">✅ Genuine Brands</span>
+        <span class="pill">🚚 Local Delivery</span>
+        <span class="pill">💬 Expert Advice</span>
+        <span class="pill">💵 Pay on Delivery</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+    <!-- Categories -->
+    <div class="cat-bar" id="catBar"></div>
+
+    <div class="section-head">
+      <h3 id="listTitle">All Products</h3>
+    </div>
+
+    <!-- Products -->
+    <div class="grid" id="productGrid"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site">
+    <div class="container">
+      <div>
+        <h4>🌾 Neha Khaad Bhandar</h4>
+        <p>D.B. Singh Seeds & Neha Khaad Bhandar. Your trusted partner for seeds, fertilizers and crop protection.</p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p>📞 +91 8382819956</p>
+        <p>📍 Sadar, Mirzapur, Uttar Pradesh</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <p><a href="/">Home</a></p>
+        <p><a href="/admin">Shop Admin</a></p>
+      </div>
+    </div>
+    <div class="copyright">© <span id="year"></span> Neha Khaad Bhandar. Jai Kisan 🚜</div>
+  </footer>
+
+  <!-- Cart drawer -->
+  <div class="overlay" id="overlay"></div>
+  <aside class="drawer" id="cartDrawer">
+    <header>
+      <h3>🛒 Your Cart</h3>
+      <button class="close" id="closeCart">&times;</button>
+    </header>
+    <div class="cart-items" id="cartItems"></div>
+    <footer>
+      <div class="total-row"><span>Total</span><span id="cartTotal">₹0</span></div>
+      <button class="btn-primary" id="checkoutBtn">Proceed to Checkout</button>
+    </footer>
+  </aside>
+
+  <!-- Checkout modal -->
+  <div class="modal-card" id="checkoutModal">
+    <div id="checkoutForm">
+      <h3>Checkout</h3>
+      <p class="sub">Fill your details — pay cash when your order is delivered or picked up.</p>
+      <div class="field">
+        <label>Full Name *</label>
+        <input id="cName" type="text" placeholder="Your name" />
+      </div>
+      <div class="field">
+        <label>Phone Number *</label>
+        <input id="cPhone" type="tel" placeholder="10-digit mobile number" />
+      </div>
+      <div class="field">
+        <label>Delivery Address / Village *</label>
+        <textarea id="cAddress" placeholder="Village, post, district..."></textarea>
+      </div>
+      <div class="total-row"><span>Order Total</span><span id="modalTotal">₹0</span></div>
+      <button class="btn-primary" id="placeOrderBtn">Place Order</button>
+      <button class="btn-primary" id="cancelCheckout" style="background:#eef3ef;color:var(--ink);margin-top:8px;">Back</button>
+    </div>
+    <div id="checkoutSuccess" class="success-box" style="display:none;">
+      <div class="check">✅</div>
+      <h3>Order Placed!</h3>
+      <p class="sub">We'll call you shortly to confirm.</p>
+      <div class="ono" id="successOrderNo"></div>
+      <p class="sub">Please note this order number for reference.</p>
+      <button class="btn-primary" id="doneBtn">Continue Shopping</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

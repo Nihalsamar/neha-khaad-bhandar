@@ -1,0 +1,30 @@
+# Render Blueprint — free web service for Neha Khaad Bhandar.
+# Deploy: push this repo to GitHub, then on render.com choose
+# "New +" → "Blueprint" and select the repo. Render reads this file.
+#
+# Set the secret values (Turso URL/token, admin password) in the Render
+# dashboard when prompted (they are marked sync:false below).
+services:
+  - type: web
+    name: neha-khaad-bhandar
+    runtime: node
+    plan: free
+    region: singapore            # closest free Render region to India
+    buildCommand: npm install
+    # Seed is idempotent: it creates tables + initial data on first deploy,
+    # then skips on later deploys.
+    startCommand: node database/seed.js && node server.js
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true       # Render generates a strong random secret
+      - key: ADMIN_USERNAME
+        sync: false               # set in dashboard (e.g. admin)
+      - key: ADMIN_PASSWORD
+        sync: false               # set in dashboard (choose a strong password)
+      - key: TURSO_DATABASE_URL
+        sync: false               # from your Turso database
+      - key: TURSO_AUTH_TOKEN
+        sync: false               # from your Turso database

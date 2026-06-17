@@ -1,0 +1,8 @@
+node_modules/
+.env
+# SQLite database + write-ahead-log files
+database/*.db
+database/*.db-shm
+database/*.db-wal
+npm-debug.log*
+.DS_Store
