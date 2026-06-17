@@ -33,6 +33,7 @@
         <button class="nav-item" data-tab="products">📦 Products</button>
         <button class="nav-item" data-tab="inventory">📋 Inventory</button>
         <button class="nav-item" data-tab="orders">🧾 Orders</button>
+        <button class="nav-item" data-tab="account">⚙️ Account</button>
       </nav>
       <button class="changepw" id="changePwBtn">🔑 Change Password</button>
       <button class="logout" id="logoutBtn">🚪 Logout</button>
@@ -90,6 +91,18 @@
           </select>
         </div>
         <div id="ordersList"></div>
+      </section>
+
+      <!-- Account -->
+      <section id="tab-account" class="tab" style="display:none;">
+        <div class="panel" style="max-width:460px;">
+          <h3>Change login details</h3>
+          <p class="muted" style="margin-bottom:16px;">Update your admin username and/or password. Your current password is required to confirm.</p>
+          <div class="field"><label>New username</label><input id="acUsername" type="text" placeholder="admin" /></div>
+          <div class="field"><label>New password <span class="muted">(leave blank to keep current)</span></label><input id="acNewPass" type="password" placeholder="••••••••" /></div>
+          <div class="field"><label>Current password *</label><input id="acCurrentPass" type="password" placeholder="enter current password to confirm" /></div>
+          <button class="btn-primary" id="acSaveBtn">Save changes</button>
+        </div>
       </section>
     </main>
   </div>

@@ -66,12 +66,13 @@ function switchTab(tab) {
   document.querySelectorAll('.nav-item').forEach((b) => b.classList.toggle('active', b.dataset.tab === tab));
   document.querySelectorAll('.tab').forEach((s) => (s.style.display = 'none'));
   $('tab-' + tab).style.display = 'block';
-  const titles = { dashboard: 'Dashboard', products: 'Products', inventory: 'Inventory', orders: 'Orders' };
+  const titles = { dashboard: 'Dashboard', products: 'Products', inventory: 'Inventory', orders: 'Orders', account: 'Account' };
   $('tabTitle').textContent = titles[tab];
   if (tab === 'dashboard') loadDashboard();
   if (tab === 'products') loadProducts();
   if (tab === 'inventory') loadInventory();
   if (tab === 'orders') loadOrders();
+  if (tab === 'account') loadAccount();
 }
 
 /* ----------------------------- Dashboard ----------------------------- */
@@ -290,6 +291,38 @@ async function loadOrders() {
   );
 }
 $('orderFilter').addEventListener('change', loadOrders);
+
+/* ----------------------------- Account ----------------------------- */
+async function loadAccount() {
+  try {
+    const me = await api('/api/admin/account');
+    $('acUsername').value = me.username;
+    $('acNewPass').value = '';
+    $('acCurrentPass').value = '';
+  } catch (e) { toast(e.message, true); }
+}
+
+async function saveAccount() {
+  const body = {
+    username: $('acUsername').value.trim(),
+    password: $('acNewPass').value,
+    current_password: $('acCurrentPass').value,
+  };
+  if (!body.current_password) return toast('Enter your current password to confirm', true);
+  $('acSaveBtn').disabled = true;
+  try {
+    const r = await api('/api/admin/account', { method: 'PUT', body: JSON.stringify(body) });
+    $('whoAmI').textContent = r.username;
+    $('acNewPass').value = '';
+    $('acCurrentPass').value = '';
+    toast('Login details updated');
+  } catch (e) {
+    toast(e.message, true);
+  } finally {
+    $('acSaveBtn').disabled = false;
+  }
+}
+$('acSaveBtn').addEventListener('click', saveAccount);
 
 /* ----------------------------- Toast ----------------------------- */
 let toastTimer;

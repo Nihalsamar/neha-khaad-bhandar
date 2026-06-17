@@ -1,7 +1,8 @@
 /** Admin-only endpoints: product CRUD, inventory, orders, dashboard stats. */
 const express = require('express');
+const bcrypt = require('bcryptjs');
 const { get, all, run, tx } = require('../database/db');
-const { requireAdmin } = require('../middleware/auth');
+const { requireAdmin, signToken } = require('../middleware/auth');
 
 const router = express.Router();
 router.use(requireAdmin); // everything below requires a logged-in admin
@@ -172,6 +173,52 @@ router.patch('/orders/:id/status', async (req, res, next) => {
     }
 
     res.json(await get('SELECT * FROM orders WHERE id = ?', [order.id]));
+  } catch (e) { next(e); }
+});
+
+/* ------------------------------- Account ------------------------------ */
+// Current logged-in admin's username
+router.get('/account', async (req, res, next) => {
+  try {
+    const me = await get('SELECT id, username FROM admins WHERE id = ?', [req.admin.id]);
+    if (!me) return res.status(404).json({ error: 'Account not found.' });
+    res.json({ username: me.username });
+  } catch (e) { next(e); }
+});
+
+// Change username and/or password. Requires the current password.
+router.put('/account', async (req, res, next) => {
+  try {
+    const { current_password, username, password } = req.body;
+    if (!current_password) return res.status(400).json({ error: 'Current password is required.' });
+
+    const me = await get('SELECT * FROM admins WHERE id = ?', [req.admin.id]);
+    if (!me) return res.status(404).json({ error: 'Account not found.' });
+    if (!bcrypt.compareSync(current_password, me.password_hash))
+      return res.status(401).json({ error: 'Current password is incorrect.' });
+
+    const newUsername = (username || '').trim() || me.username;
+    if (password && password.length < 4)
+      return res.status(400).json({ error: 'New password must be at least 4 characters.' });
+
+    // Check username isn't taken by a different admin
+    if (newUsername !== me.username) {
+      const clash = await get('SELECT id FROM admins WHERE username = ? AND id != ?', [newUsername, me.id]);
+      if (clash) return res.status(400).json({ error: 'That username is already taken.' });
+    }
+
+    const newHash = password ? bcrypt.hashSync(password, 10) : me.password_hash;
+    await run('UPDATE admins SET username = ?, password_hash = ? WHERE id = ?', [newUsername, newHash, me.id]);
+
+    // Re-issue the session cookie so the display name stays in sync
+    const token = signToken({ id: me.id, username: newUsername });
+    res.cookie('token', token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.json({ username: newUsername });
   } catch (e) { next(e); }
 });
 
